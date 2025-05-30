@@ -2,8 +2,6 @@
 
 This project implements **real-time object detection and tracking** using **YOLOv9** and **Deep SORT**. It detects and tracks multiple objects (like people, vehicles, etc.) across video frames, draws bounding boxes, assigns unique IDs, counts objects, and displays motion trails.
 
-> 🔥 Includes demo footage generated via **Google Veo 2** to simulate a shopping mall-like scenario with vehicles and people in motion.
-
 ---
 
 ## 🚀 Features
@@ -20,13 +18,16 @@ This project implements **real-time object detection and tracking** using **YOLO
 ## 📁 Folder Structure
 
 ```
-your-repo/
-├── deep_sort_pytorch/         # Deep SORT tracking
-├── runs/                      # Saved runs with output
-├── data/                      # Input files (images/videos)
-├── yolov9-c.pt                # YOLOv9 weights file
-├── your_script.py             # Main entrypoint
-├── requirements.txt
+Obj-Det/
+├── templates/ 
+├── yolov9/
+       ├── deep_sort_pytorch/         # Deep SORT tracking
+       ├── runs/                      # Saved runs with output
+       ├── data/                      # Input files (images/videos)
+       ├── yolov9-c.pt                # YOLOv9 weights file
+       ├── detect_dual.py             # Main entrypoint
+       ├── requirements.txt
+├── app.py
 └── README.md
 ```
 
@@ -41,7 +42,7 @@ Download `yolov9-c.pt` and place it in the root directory of your project.
 ./yolov9-c.pt
 ```
 
-📥 Download: [YOLOv9 GitHub (WongKinYiu)](https://github.com/WongKinYiu/yolov9)
+📥 Download: [YOLOv9 GitHub (WongKinYiu)](https://github.com/WongKinYiu/yolov9/releases/tag/v0.1)
 
 ---
 
@@ -49,8 +50,8 @@ Download `yolov9-c.pt` and place it in the root directory of your project.
 
 ### 1. Clone the Repo
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/Xioketh/object_detection.git
+cd object_detection
 ```
 
 ### 2. (Optional) Create a Virtual Environment
@@ -64,6 +65,7 @@ source venv/bin/activate
 
 ### 3. Install Dependencies
 ```bash
+cd yolov9
 pip install -r requirements.txt
 ```
 
@@ -80,18 +82,11 @@ Make sure you have:
 
 ## 🛠️ Usage
 
-### Run Tracking on a Video
+### Run Project
 ```bash
-python your_script.py --weights yolov9-c.pt --source data/demo_video.mp4 --view-img
+python app.py
 ```
 
-- `--weights`: Path to YOLO model weights
-- `--source`: Path to video/image/webcam/stream
-- `--view-img`: Displays the result in a window
-
-> Demo video generated with Google Veo 2: simulated urban/public environment with vehicles and people.
-
----
 
 ## 📊 Output
 
@@ -120,16 +115,6 @@ You can customize tracked classes in the code.
 
 ---
 
-## 🎥 Demo Preview
-
-> Video generated with **Google Veo 2** using the prompt:
->  
-> `"Aerial view of a busy city street with people walking, cars driving, and traffic lights, high quality, cinematic look"`
-
-✅ This makes the demo visually appealing for showcasing tracking in real-world scenarios.
-
----
-
 ## 🌐 Optional Enhancements
 
 - Add UI for selecting inputs
@@ -149,12 +134,10 @@ MIT License – feel free to use, modify, and distribute with proper credit.
 
 - [YOLOv9 by WongKinYiu](https://github.com/WongKinYiu/yolov9)
 - [Deep SORT by nwojke](https://github.com/nwojke/deep_sort)
-- [Google Veo 2](https://ai.google/discover/veo/) for AI-generated demo video
-
 ---
 
 ## 📬 Contact
 
-Connect with me on [LinkedIn](https://linkedin.com/in/your-profile) for collaboration, questions, or professional inquiries.
+Connect with me on [LinkedIn](https://www.linkedin.com/in/kethaka-janadithya-ranasinghe-a73ab7242/) for collaboration, questions, or professional inquiries.
 
 ---
