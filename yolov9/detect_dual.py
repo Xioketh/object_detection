@@ -3,6 +3,9 @@ import os
 import platform
 import sys
 from pathlib import Path
+import json
+from collections import defaultdict
+
 
 # import torch
 
@@ -47,7 +50,18 @@ deepsort = DeepSort(str(ckpt_path))
 data_deque = {}
 
 def colorLabels(cls_id):
-    return (int(cls_id * 30 % 255), 100, 255)
+    # Define fixed colors for specific class IDs
+    color_map = {
+        0: (255, 0, 0),      # person - Blue
+        1: (128, 128, 128),      # bicycle - Gray
+        2: (0, 0, 255),      # car - Red
+        3: (255, 255, 0),    # motorbike - Cyan
+        5: (255, 0, 255),    # bus - Magenta
+        7: (0, 255, 255),    # truck - Yellow
+        # Add more classes as needed
+    }
+    return color_map.get(cls_id, (0, 255, 0))  # default green
+
 
 
 def clasNames():
@@ -176,6 +190,8 @@ def run(
     # Run inference
     model.warmup(imgsz=(1 if pt or model.triton else bs, 3, *imgsz))  # warmup
     seen, windows, dt = 0, [], (Profile(), Profile(), Profile())
+    class_counts = defaultdict(int)
+    unique_class_ids = defaultdict(set)
     for path, im, im0s, vid_cap, s in dataset:
         with dt[0]:
             im = torch.from_numpy(im).to(model.device)
@@ -218,9 +234,10 @@ def run(
                 det[:, :4] = scale_boxes(im.shape[2:], det[:, :4], im0.shape).round()
 
                 # Print results
-                for c in det[:, 5].unique():
-                    n = (det[:, 5] == c).sum()  # detections per class
-                    s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
+                # for c in det[:, 5].unique():
+                #     n = (det[:, 5] == c).sum()  # detections per class
+                #     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, " # add to string
+                #     class_counts[names[int(c)]] += int(n)
 
                 # Write results
                 # for *xyxy, conf, cls in reversed(det):
@@ -262,6 +279,14 @@ def run(
                     object_id = output[:,-1]
                     draw_boxes(im0, bbox_xyxy, True, identities, object_id)
 
+                for obj in output:
+                    identity_id = int(obj[-2])
+                    class_id = int(obj[-1])
+                    class_name = className[class_id]
+                    if identity_id not in unique_class_ids[class_name]:
+                        unique_class_ids[class_name].add(identity_id)
+                        class_counts[class_name] += 1
+
             # Stream results
             im0 = annotator.result()
             if view_img:
@@ -294,6 +319,15 @@ def run(
         # Print time (inference-only)
         LOGGER.info(f"{s}{'' if len(det) else '(no detections), '}{dt[1].dt * 1E3:.1f}ms")
 
+    # Save summary to JSON
+    results_path = save_dir / 'detection_results.json'
+    print("-------------------------------------")
+    print(results_path)
+    print("class_counts:: ",class_counts)
+    with open(results_path, 'w') as f:
+        json.dump(class_counts, f)
+
+
     # Print results
     t = tuple(x.t / seen * 1E3 for x in dt)  # speeds per image
     LOGGER.info(f'Speed: %.1fms pre-process, %.1fms inference, %.1fms NMS per image at shape {(1, 3, *imgsz)}' % t)
@@ -302,6 +336,8 @@ def run(
         LOGGER.info(f"Results saved to {colorstr('bold', save_dir)}{s}")
     if update:
         strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
+
+
 
 
 def parse_opt():
