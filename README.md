@@ -2,8 +2,6 @@
 
 This project implements **real-time object detection and tracking** using **YOLOv9** and **Deep SORT**. It detects and tracks multiple objects (like people, vehicles, etc.) across video frames, draws bounding boxes, assigns unique IDs, counts objects, and displays motion trails.
 
-> 🔥 Includes demo footage generated via **Google Veo 2** to simulate a shopping mall-like scenario with vehicles and people in motion.
-
 ---
 
 ## 🚀 Features
